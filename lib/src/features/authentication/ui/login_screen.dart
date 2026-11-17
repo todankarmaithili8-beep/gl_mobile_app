@@ -6,6 +6,7 @@ import 'package:gl_mobile_app/src/features/authentication/bloc/authentication/au
 import 'package:gl_mobile_app/src/features/authentication/bloc/authentication/authenticate_event.dart';
 import 'package:gl_mobile_app/src/features/authentication/bloc/authentication/authenticate_state.dart';
 import 'package:gl_mobile_app/src/features/trip/ui/trip_list_screen.dart';
+import 'package:gl_mobile_app/src/core/session/session_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -54,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state is LoginSuccess) {
           final session = state.response.suidSession;
           final username = state.response.objUser?.sUsername ?? '';
+
           print('LOGIN SESSION EMPTY: ${session.isEmpty}');
           print('LOGIN SESSION LENGTH: ${session.length}');
 
@@ -68,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           final apiRepository = context.read<ApiRepository>();
 
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (_) => TripListScreen(
@@ -78,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 vehicleNumber: '',
               ),
             ),
+            (route) => false,
           );
         } else if (state is AuthenticateFailure) {
           ScaffoldMessenger.of(

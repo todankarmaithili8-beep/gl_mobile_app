@@ -19,6 +19,7 @@ dependencies:
         retrofit: ^4.4.2
         json_annotation: ^4.9.0
         crypto: ^3.0.7
+        flutter_secure_storage: ^11.2.0
 
 
 dev_dependencies:

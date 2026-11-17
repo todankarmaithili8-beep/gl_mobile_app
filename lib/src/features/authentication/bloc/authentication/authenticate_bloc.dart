@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:gl_mobile_app/src/core/session/session_manager.dart';
+import 'package:gl_mobile_app/src/core/network/api_repository.dart';
+
 import 'package:gl_mobile_app/src/features/authentication/bloc/authentication/authenticate_event.dart';
 import 'package:gl_mobile_app/src/features/authentication/bloc/authentication/authenticate_state.dart';
-import 'package:gl_mobile_app/src/core/network/api_repository.dart';
 import 'package:gl_mobile_app/src/features/authentication/model/login/login_req.dart';
 
 class AuthenticateBloc extends Bloc<AuthenticateEvent, AuthenticateState> {
@@ -17,13 +20,11 @@ class AuthenticateBloc extends Bloc<AuthenticateEvent, AuthenticateState> {
       try {
         // Step 1: Authenticate API
         final authResponse = await repository.authenticate(event.request);
+
         final authData = authResponse.data;
 
         print('AUTH STATUS: ${authResponse.status?.jStatusCode}');
         print('AUTH MESSAGE: ${authResponse.status?.sResponseText}');
-        print('AUTH DATA NULL: ${authData == null}');
-        print('AUTH TOKEN EMPTY: ${(authData?.sAuthToken ?? '').isEmpty}');
-        print('CLIENT ID EMPTY: ${(authData?.sClientAppID ?? '').isEmpty}');
 
         if (authData == null ||
             (authData.sAuthToken ?? '').isEmpty ||
@@ -46,22 +47,13 @@ class AuthenticateBloc extends Bloc<AuthenticateEvent, AuthenticateState> {
         final salt = authData.sSalt ?? '';
 
         if (clientAppKey.isEmpty || salt.isEmpty) {
-          emit(
-            AuthenticateFailure(
-              'Client App Key or Salt is missing from authentication response.',
-            ),
-          );
+          emit(AuthenticateFailure('Client App Key or Salt is missing.'));
           return;
         }
 
         final clientAppHash = sha512
             .convert(utf8.encode('$clientAppKey$salt'))
             .toString();
-
-        print('LOGIN USERNAME: ${event.username}');
-        print('PASSWORD HASH LENGTH: ${passwordHash.length}');
-        print('CLIENT ID EMPTY: ${(authData.sClientAppID ?? '').isEmpty}');
-        print('AUTH TOKEN EMPTY: ${(authData.sAuthToken ?? '').isEmpty}');
 
         // Step 4: Login API
         final loginResponse = await repository.login(
@@ -78,14 +70,21 @@ class AuthenticateBloc extends Bloc<AuthenticateEvent, AuthenticateState> {
 
         print('LOGIN STATUS: ${loginResponse?.status?.jStatusCode}');
         print('LOGIN MESSAGE: ${loginResponse?.status?.sResponseText}');
-        print(
-          'LOGIN SESSION EMPTY: ${(loginResponse?.suidSession ?? '').isEmpty}',
-        );
 
-        // Step 5: Only accept a successful login with a session
+        // Step 5: Check successful login
         if (loginResponse != null &&
             loginResponse.status?.jStatusCode == 0 &&
             loginResponse.suidSession.isNotEmpty) {
+          // Step 6: Save session for 24 hours
+
+          await SessionManager.saveSession(
+            loginResponse.suidSession,
+            username: event.username,
+            authToken: authData.sAuthToken!,
+          );
+
+          print('LOGIN SESSION SAVED SUCCESSFULLY');
+
           emit(LoginSuccess(loginResponse));
         } else {
           emit(

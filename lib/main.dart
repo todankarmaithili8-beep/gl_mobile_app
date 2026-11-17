@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 
 import 'package:gl_mobile_app/src/core/network/api_rest_client.dart';
 import 'package:gl_mobile_app/src/core/network/api_repository.dart';
-
+import 'package:gl_mobile_app/src/core/session/auth_gate.dart';
 import 'package:gl_mobile_app/src/features/authentication/bloc/authentication/authenticate_bloc.dart';
 import 'package:gl_mobile_app/src/features/authentication/ui/login_screen.dart';
 
@@ -63,7 +63,7 @@ class MilkRunApp extends StatelessWidget {
             ),
             scaffoldBackgroundColor: const Color(0xFFF4F7FA),
           ),
-          home: const LoginScreen(),
+          home: const AuthGate(),
         ),
       ),
     );
