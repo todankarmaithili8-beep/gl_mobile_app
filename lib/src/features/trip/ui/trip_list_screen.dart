@@ -1102,7 +1102,6 @@ class _TripCard extends StatelessWidget {
               ),
             ),
 
-            // TRIP DETAILS ARROW
             IconButton(
               onPressed: () => _openTripDetails(context),
               icon: const Icon(

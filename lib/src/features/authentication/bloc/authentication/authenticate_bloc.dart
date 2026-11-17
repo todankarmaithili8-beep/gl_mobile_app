@@ -18,7 +18,6 @@ class AuthenticateBloc extends Bloc<AuthenticateEvent, AuthenticateState> {
       emit(AuthenticateLoading());
 
       try {
-        // Step 1: Authenticate API
         final authResponse = await repository.authenticate(event.request);
 
         final authData = authResponse.data;
@@ -37,12 +36,10 @@ class AuthenticateBloc extends Bloc<AuthenticateEvent, AuthenticateState> {
           return;
         }
 
-        // Step 2: Generate password hash
         final passwordHash = sha512
             .convert(utf8.encode(event.password))
             .toString();
 
-        // Step 3: Generate client app hash
         final clientAppKey = authData.sClientAppKey ?? '';
         final salt = authData.sSalt ?? '';
 
@@ -55,7 +52,6 @@ class AuthenticateBloc extends Bloc<AuthenticateEvent, AuthenticateState> {
             .convert(utf8.encode('$clientAppKey$salt'))
             .toString();
 
-        // Step 4: Login API
         final loginResponse = await repository.login(
           LoginReq(
             sUsername: event.username,
@@ -71,12 +67,10 @@ class AuthenticateBloc extends Bloc<AuthenticateEvent, AuthenticateState> {
         print('LOGIN STATUS: ${loginResponse?.status?.jStatusCode}');
         print('LOGIN MESSAGE: ${loginResponse?.status?.sResponseText}');
 
-        // Step 5: Check successful login
         if (loginResponse != null &&
             loginResponse.status?.jStatusCode == 0 &&
             loginResponse.suidSession.isNotEmpty) {
-          // Step 6: Save session for 24 hours
-
+          //Save session for 24 hours
           await SessionManager.saveSession(
             loginResponse.suidSession,
             username: event.username,

@@ -9,7 +9,6 @@ class SessionManager {
   static const String authTokenKey = 'auth_token';
   static const String expiryKey = 'session_expiry';
 
-  // Save session for 24 hours
   static Future<void> saveSession(
     String session, {
     required String username,
@@ -25,7 +24,6 @@ class SessionManager {
     await _storage.write(key: expiryKey, value: expiry.toIso8601String());
   }
 
-  // Check session validity
   static Future<bool> isSessionValid() async {
     final session = await _storage.read(key: sessionKey);
     final expiryString = await _storage.read(key: expiryKey);
