@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
-
 import 'package:gl_mobile_app/src/core/network/api_rest_client.dart';
 import 'package:gl_mobile_app/src/core/network/api_repository.dart';
 import 'package:gl_mobile_app/src/core/session/auth_gate.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:gl_mobile_app/src/features/trip/model/get_trip_supplier_details/get_trip_supplier_details_rsp.dart';
-
 import 'package:gl_mobile_app/src/features/trip/bloc/get_trip_supplier_details/get_trip_supplier_details_bloc.dart';
 
 import 'package:gl_mobile_app/src/features/trip/bloc/get_trip_supplier_details/get_trip_supplier_details_event.dart';

@@ -113,9 +113,6 @@ class _TripListScreenState extends State<TripListScreen> {
     }
   }
 
-  // ======================================================
-  // TRIP ACTION
-  // ======================================================
 
   void _updateTripAction({
     required BuildContext context,
@@ -150,8 +147,6 @@ class _TripListScreenState extends State<TripListScreen> {
       return;
     }
 
-    // Every action first fetches Supplier Details.
-    // Start Trip also fetches Supplier Details before Update API.
 
     _pendingTripId = tripId;
     _pendingAction = action;
@@ -165,9 +160,6 @@ class _TripListScreenState extends State<TripListScreen> {
     );
   }
 
-  // ======================================================
-  // UPDATE TRIP API REQUEST
-  // ======================================================
 
   void _sendUpdateTripRequest({
     required BuildContext context,
